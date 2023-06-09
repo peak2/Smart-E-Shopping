@@ -1,0 +1,34 @@
+const express = require('express');
+const path = require('path')
+
+// const adminRoutes = require('./routes/admin.js')
+const adminData = require('./routes/admin.js')
+const shopRoutes = require('./routes/shop.js')
+
+const app = express();
+
+app.set('view engine', 'ejs')
+app.set('views', 'views')   //the first views is the name of the folder you store ur html files into, the second views is default, which must not b changed 
+                            //suppose u use anoda name like template, u will use it like dz: app.set('template', 'views')
+
+// Middleware for parsing JSON
+app.use(express.json());
+
+// Middleware for parsing URL-encoded data
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, '/public')))
+
+
+app.use(shopRoutes);
+// app.use('/admin', adminRoutes);
+app.use('/admin', adminData.routes);
+
+
+app.use((req, res, next)=> {
+    res.status(404).render('404', {pageTitle: 'Page Not Found', path: req.path})    //The second 404 on dz line represents 404.ejs
+})
+
+
+app.listen(3903, ()=>{
+    console.log("app running on 3903");
+}) 
