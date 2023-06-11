@@ -5,22 +5,32 @@ exports.getProducts = (req, res, next) => {
     res.render("shop/product-list", {
       prods: products,
       pageTitle: "All Products",
-      path: "/products", //This path is passed to navigation.ejs to check for active page, wch is defined in main.css active class
+      path: "/products", 
     });
   });
 };
 
 exports.getIndex = (req, res, next) => {
+  Product.fetchAll((products) => {
   res.render("shop/index", {
     prods: products,
     pageTitle: "Shop",
-    path: "/", //This path is passed to navigation.ejs to check for active page, wch is defined in main.css active class
+    path: "/", 
   });
+})
 }
 
 exports.getCart = (req, res, next) => {
   res.render("shop/cart", {
-    pageTitle: "Carts",
+    pageTitle: "Your Cart",
     path: "/cart", 
   });
 };
+
+exports.getCheckout = (req, res, next) => {
+  res.render('shop/checkout', {
+    pageTitle: "Checkout",
+    path: '/checkout'
+
+  })
+}
