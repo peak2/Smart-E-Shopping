@@ -1,9 +1,9 @@
 const express = require('express');
 const path = require('path')
 
-// const adminRoutes = require('./routes/admin.js')
-const adminData = require('./routes/admin.js')
+const adminRoutes = require('./routes/admin.js')
 const shopRoutes = require('./routes/shop.js')
+const errorController = require('./controllers/error')
 
 const app = express();
 
@@ -20,15 +20,12 @@ app.use(express.static(path.join(__dirname, '/public')))
 
 
 app.use(shopRoutes);
-// app.use('/admin', adminRoutes);
-app.use('/admin', adminData.routes);
+app.use('/admin', adminRoutes);
 
 
-app.use((req, res, next)=> {
-    res.status(404).render('404', {pageTitle: 'Page Not Found', path: req.path})    //The second 404 on dz line represents 404.ejs
-})
+app.use(errorController.get404)
 
 
-app.listen(3903, ()=>{
-    console.log("app running on 3903");
+app.listen(3905, ()=>{
+    console.log("app running on 3905");
 }) 
