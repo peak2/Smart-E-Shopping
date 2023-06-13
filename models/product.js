@@ -39,6 +39,13 @@ module.exports = class Products {
     getProductsFromFile(cb);
   }
   
+  static findById(id, cb) {
+    getProductsFromFile(products => {
+      const product = products.find(p => p.id === id);
+      cb(product)
+    })
+  }
+
 };
 
 // THE CODE BELOW IS BEFORE REFACTORING THIS MODEL FILE

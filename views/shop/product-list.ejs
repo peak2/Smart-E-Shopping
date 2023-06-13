@@ -19,18 +19,23 @@
                                     <img src="<%= product.imageUrl %>" alt="<%= product.title %>">
                                 </div>
                                 <div class="card__content">
-                                    <h2 class="product__price">$
-                                        <%= product.price %>
+                                    <h2 class="product__price">
+                                        $<%= product.price %>
                                     </h2>
                                     <p class="product__description">
                                         <%= product.description %>
                                     </p>
                                 </div>
                                 <div class="card__actions">
-                                    <a href="/products/<%= product.id  %>" class="btn">Details</a>
-                                    <form action="/add-to-cart" method="POST">
-                                        <button class="btn">Add to Cart</button>
-                                    </form>
+                                    <a href="/products/<%= product.id %>" class="btn">Details</a>
+                                    <%- include('../includes/add-to-cart', {product:product}) %> 
+                                    <!-- 
+                                        suppose i'm not using this include method, indont need to call 
+                                        {product:product} again coz it is already available in the loop on dz 
+                                        page, bt using includes method, it will not see the "product" on this 
+                                        page, you av to redefine another product for the include approach...
+                                        check product-detail to get it better 
+                                    -->
                                 </div>
                             </article>
                             <% } %>
