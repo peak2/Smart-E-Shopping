@@ -11,8 +11,7 @@ exports.getAddProduct = (req, res, next) => {
   res.render("admin/edit-product", {
     pageTitle: "Add Product",
     path: "/admin/add-product",
-    editing: false
-    // pageButton: "Add Product"                             
+    editing: false                            
   });
 };
 
@@ -22,7 +21,7 @@ exports.postAddProduct = (req, res, next) => {
     const imageUrl = req.body.imageUrl;
     const price = req.body.price;
     const description = req.body.description;
-  const product = new Product(title, imageUrl, price, description);
+  const product = new Product(null, title, imageUrl, price, description);
   product.save();
   res.redirect("/");
 };
@@ -31,27 +30,33 @@ exports.postAddProduct = (req, res, next) => {
 //Query parameter can be added to a url by adding question mark followed by key=value pair 
 exports.getEditProduct = (req, res, next) => {
   const editMode = req.query.edit;        // checking if d browser url query parameter/s contains "edit" as a
-  if(!editMode) {                        // key in http://localhost:3905/admin/edit-product/12345/?edit=true
-    return res.redirect('/')             // the query parameters can b more than one key=value pair, just use 
-  } 
-  const prodId = req.params.productId
-  Product.findById(prodId, product => {
+  if(!editMode) {                         // key in http://localhost:3905/admin/edit-product/12345/?edit=true
+    return res.redirect('/')              // the query parameters can b more than one key=value pair, just use 
+  }                                       // http://localhost:3905/admin/edit-product/12345/?edit=true&ade=boy
+  const prodId = req.params.productId     // const editMode = req.query.ade;
+  Product.findById(prodId, product => {   // the key to confirm what you are doing
     if(!product) {
       return res.redirect('/')
     }
-    res.render("admin/edit-product", {     // http://localhost:3905/admin/edit-product/12345/?edit=true&ade=boy
-      pageTitle: "Edit Product",           // const editMode = req.query.ade;
+    res.render("admin/edit-product", {     
+      pageTitle: "Edit Product",           
       path: "/admin/edit-product", 
       editing: editMode,
-      product: product,
-      // pageButton: "Update Product"                           
+      product: product,                          
     });
-  })                                     // the key to confirm what you are doing 
+  })                                      
 };
 
 
 exports.postEditProduct = (req, res, next) => {
-  
+  const prodId = req.body.productId;
+  const updatedTitle = req.body.title;
+  const updatedImageUrl = req.body.imageUrl;
+  const updatedPrice = req.body.price;
+  const updatedDescription = req.body.description;
+  const updatedProduct = new Product(prodId, updatedTitle, updatedImageUrl, updatedPrice, updatedDescription);
+  updatedProduct.save();
+  res.redirect("/");
 }
 
 
