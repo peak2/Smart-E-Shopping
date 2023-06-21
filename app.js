@@ -13,7 +13,12 @@ app.set('view engine', 'ejs')
 app.set('views', 'views')   //the first views is the name of the folder you store ur html files into, the second views is default, which must not b changed 
                             //suppose u use anoda name like template, u will use it like dz: app.set('template', 'views')
 
-db.execute('SELECT * FROM products')
+// db.execute('SELECT * FROM products')
+//     .then(result => {
+//         console.log(result[0], result[1]);
+//     }).catch(err => {
+//         console.log(err);
+//     });
 
 
 app.use(express.json());                                        // Middleware for parsing JSON

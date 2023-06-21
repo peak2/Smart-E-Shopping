@@ -6,3 +6,5 @@ const pool = mysql.createPool({
     database: 'e_smart_shopping',
     password: '@Talent2010'
 })
+
+module.exports = pool.promise();
