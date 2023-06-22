@@ -23,6 +23,7 @@ exports.postAddProduct = (req, res, next) => {
   .then(result => {
     // console.log(result);
     console.log('Created Product');
+    res.redirect('/admin/products')
   })
   .catch(err => {
     console.log(err);
@@ -30,14 +31,35 @@ exports.postAddProduct = (req, res, next) => {
 };
 
 
-//Query parameter can be added to a url by adding question mark followed by key=value pair 
+// //Query parameter can be added to a url by adding question mark followed by key=value pair 
+// exports.getEditProduct = (req, res, next) => {
+//   const editMode = req.query.edit;        // checking if d browser url query parameter/s contains "edit" as a
+//   if(!editMode) {                         // key in http://localhost:3905/admin/edit-product/12345/?edit=true
+//     return res.redirect('/')              // the query parameters can b more than one key=value pair, just use 
+//   }                                       // http://localhost:3905/admin/edit-product/12345/?edit=true&ade=boy
+//   const prodId = req.params.productId     // const editMode = req.query.ade;
+//   Product.findById(prodId, product => {   // the key to confirm what you are doing
+//     if(!product) {
+//       return res.redirect('/')
+//     }
+//     res.render("admin/edit-product", {     
+//       pageTitle: "Edit Product",           
+//       path: "/admin/edit-product", 
+//       editing: editMode,
+//       product: product,                          
+//     });
+//   })                                      
+// };
+
+
 exports.getEditProduct = (req, res, next) => {
-  const editMode = req.query.edit;        // checking if d browser url query parameter/s contains "edit" as a
-  if(!editMode) {                         // key in http://localhost:3905/admin/edit-product/12345/?edit=true
-    return res.redirect('/')              // the query parameters can b more than one key=value pair, just use 
-  }                                       // http://localhost:3905/admin/edit-product/12345/?edit=true&ade=boy
-  const prodId = req.params.productId     // const editMode = req.query.ade;
-  Product.findById(prodId, product => {   // the key to confirm what you are doing
+  const editMode = req.query.edit;        
+  if(!editMode) {                         
+    return res.redirect('/')              
+  }                                       
+  const prodId = req.params.productId     
+  Product.findByPk(prodId)
+  .then(product => {
     if(!product) {
       return res.redirect('/')
     }
@@ -46,9 +68,29 @@ exports.getEditProduct = (req, res, next) => {
       path: "/admin/edit-product", 
       editing: editMode,
       product: product,                          
-    });
+    })
+  })
+  .catch(err => {
+    console.log(err);
   })                                      
 };
+
+// exports.postEditProduct = (req, res, next) => {
+//   const prodId = req.body.productId;
+//   const updatedTitle = req.body.title;
+//   const updatedImageUrl = req.body.imageUrl;
+//   const updatedPrice = req.body.price;
+//   const updatedDescription = req.body.description;
+//   const updatedProduct = new Product(
+//     prodId, 
+//     updatedTitle, 
+//     updatedImageUrl, 
+//     updatedPrice, 
+//     updatedDescription
+//   );
+//   updatedProduct.save();
+//   res.redirect("/admin/products");
+// }
 
 
 exports.postEditProduct = (req, res, next) => {
@@ -57,27 +99,22 @@ exports.postEditProduct = (req, res, next) => {
   const updatedImageUrl = req.body.imageUrl;
   const updatedPrice = req.body.price;
   const updatedDescription = req.body.description;
-  const updatedProduct = new Product(
-    prodId, 
-    updatedTitle, 
-    updatedImageUrl, 
-    updatedPrice, 
-    updatedDescription
-  );
-  updatedProduct.save();
-  res.redirect("/admin/products");
+  Product.findByPk(prodId)
+  .then(product => {
+    product.title = updatedTitle, 
+    product.imageUrl = updatedImageUrl, 
+    product.price = updatedPrice, 
+    product.description = updatedDescription
+    return product.save();
+  })
+  .then(result => {
+    console.log('UPDATED PRODUCT!')
+    res.redirect("/admin/products"); 
+  })
+  .catch(err => console.log(err))
 }
 
 
-// exports.getProducts = (req, res, next) => {
-//     Product.fetchAll((products) => {
-//         res.render("admin/products", {
-//           prods: products,
-//           pageTitle: "Admin Products",
-//           path: "/admin/products", 
-//         });
-//       });
-// }
 
 
 exports.getProducts = (req, res, next) => {
@@ -95,7 +132,13 @@ exports.getProducts = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  Product.deleteById(prodId)
-  res.redirect('/admin/products')
-
+  Product.findByPk(prodId)
+  .then(product => {
+    return product.destroy();
+  })
+  .then(result => {
+    console.log('PRODUCT DESTROYED');
+    res.redirect('/admin/products')
+  })
+  .catch(err => console.log(err))
 }
