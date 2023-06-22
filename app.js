@@ -5,7 +5,7 @@ const adminRoutes = require('./routes/admin.js')
 const shopRoutes = require('./routes/shop.js')
 const errorController = require('./controllers/error')
 
-const db = require('./utils/database'); 
+const sequelize = require('./utils/database'); 
 
 const app = express();
 
@@ -32,6 +32,13 @@ app.use('/admin', adminRoutes);
 app.use(errorController.get404)
 
 
-app.listen(3905, ()=>{
-    console.log("App Running on 3905");
-}) 
+sequelize
+.sync()
+.then(result => {
+    // console.log(result);
+    app.listen(3905, ()=>{
+        console.log("App Running on 3905");
+    }) 
+})
+.catch(err => console.log(err))
+
