@@ -5,7 +5,9 @@ const adminRoutes = require('./routes/admin.js')
 const shopRoutes = require('./routes/shop.js')
 const errorController = require('./controllers/error')
 
-const sequelize = require('./utils/database'); 
+const sequelize = require('./utils/database');
+const Product = require('./models/product')
+const User = require('./models/user') 
 
 const app = express();
 
@@ -26,19 +28,42 @@ app.use(express.urlencoded({ extended: true }));                // Middleware fo
 app.use(express.static(path.join(__dirname, '/public')))
 
 
+
+app.use((req, res, next) => {
+    User.findByPk(1)
+    .then(user => {
+        req.user = user;
+        next();
+    })
+    .catch(err => console.log(err));
+})
+
+
+
 app.use(shopRoutes);
 app.use('/admin', adminRoutes);
-
 app.use(errorController.get404)
 
+Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
+User.hasMany(Product);
 
 sequelize
+// .sync({ force:true })
 .sync()
 .then(result => {
+    return User.findByPk(1)
     // console.log(result);
+})
+.then(user => {
+    if(!user){
+        return User.create({ name: 'Adewale Karounwi', email: 'peak24success@gmail.com' })
+    }
+    return user;
+})
+.then(user => {
+    // console.log(user);
     app.listen(3905, ()=>{
         console.log("App Running on 3905");
     }) 
 })
 .catch(err => console.log(err))
-
