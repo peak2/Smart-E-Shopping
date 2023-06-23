@@ -1,18 +1,20 @@
 const express = require('express');
-const path = require('path')
+const path = require('path');
 
-const adminRoutes = require('./routes/admin.js')
-const shopRoutes = require('./routes/shop.js')
-const errorController = require('./controllers/error')
+const adminRoutes = require('./routes/admin.js');
+const shopRoutes = require('./routes/shop.js');
+const errorController = require('./controllers/error');
 
 const sequelize = require('./utils/database');
-const Product = require('./models/product')
-const User = require('./models/user') 
+const Product = require('./models/product');
+const User = require('./models/user'); 
+const Cart = require('./models/cart');
+const CartItem = require('./models/cart-item')
 
 const app = express();
 
-app.set('view engine', 'ejs')
-app.set('views', 'views')   //the first views is the name of the folder you store ur html files into, the second views is default, which must not b changed 
+app.set('view engine', 'ejs');
+app.set('views', 'views');   //the first views is the name of the folder you store ur html files into, the second views is default, which must not b changed 
                             //suppose u use anoda name like template, u will use it like dz: app.set('template', 'views')
 
 // db.execute('SELECT * FROM products')
@@ -39,13 +41,18 @@ app.use((req, res, next) => {
 })
 
 
-
 app.use(shopRoutes);
 app.use('/admin', adminRoutes);
 app.use(errorController.get404)
 
+
+
 Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
 User.hasMany(Product);
+User.hasOne(Cart);
+Cart.belongsTo(User);
+Cart.belongsToMany(Product, { through: CartItem});
+Product.belongsToMany(Cart, { through: CartItem});
 
 sequelize
 // .sync({ force:true })
