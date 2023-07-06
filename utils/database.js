@@ -1,23 +1,28 @@
-const Sequelize = require('sequelize');
+const mongodb = require('mongodb');
+const MongoClient = mongodb.MongoClient;
 
-const sequelize = new Sequelize('e_smart_shopping', 'root', '@Talent2010', {
-    dialect: 'mysql',
-    host: 'localhost'
-})
+let _db;
 
-module.exports = sequelize
+const mongoConnect = callback => {
+    MongoClient.connect('mongodb+srv://mongoAtlasUsername:mongoAtlasPassword@e-shopping.0skcntc.mongodb.net/shop?retryWrites=true&w=majority')
+    .then(client => {
+        console.log('Connected!');
+        _db = client.db()
+        callback()
+    })  
+    .catch(err => {
+        console.log(err);
+        throw err;   
+    })
+}
 
+const getDb = () => {
+    if(_db) {
+        return _db;
+    }
+    throw 'No Database Found!'
+}
 
-
-
-
-// const mysql = require('mysql2');
-
-// const pool = mysql.createPool({
-//     host: 'localhost',
-//     user: 'root',
-//     database: 'e_smart_shopping',
-//     password: '@Talent2010'
-// })
-
-// module.exports = pool.promise();
+// module.exports = mongoConnect;
+exports.mongoConnect = mongoConnect;
+exports.getDb = getDb;
