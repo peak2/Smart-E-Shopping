@@ -2,12 +2,13 @@ const mongodb = require("mongodb");
 const getDb = require("../utils/database").getDb;
 
 class Product {
-  constructor(title, imageUrl, price, description, id) {
+  constructor(title, imageUrl, price, description, id, userId) {
     this.title = title;
     this.imageUrl = imageUrl;
     this.price = price;
     this.description = description;
     this._id = id ? new mongodb.ObjectId(id) : null;
+    this.userId = userId;
   }
 
   // save() {
@@ -25,10 +26,8 @@ class Product {
 
   save() {
     const db = getDb();
-    let dbOp; // dbOp.. database operation, save new product or update product
-    if (this._id) {
-      // by checking if _id is present
-      //update the product
+    let dbOp;          // dbOp.. database operation, 2 determine if i'm saving new product or updating product
+    if (this._id) {    // this block checks if _id is already present and update the product
       dbOp = db
         .collection("products")
         .updateOne({ _id: this._id }, { $set: this });
@@ -79,7 +78,7 @@ class Product {
     const db = getDb();
     return db
       .collection('products')
-      .deleteOne({ _id: mongodb.ObjectId(prodId) })
+      .deleteOne({ _id: new mongodb.ObjectId(prodId) })
       .then(result => {
         console.log('Deleted');
       })
