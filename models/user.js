@@ -16,6 +16,7 @@ class User {
     return db.collection("users").insertOne(this);
   }
 
+
   //this will add cart and items under cart in users collection in the database
   //    addToCart(product) {
   //     const updatedCart = { items: [{ ...product, quantity: 1 }]}
@@ -27,6 +28,7 @@ class User {
   //         { $set: {cart: updatedCart} }
   //     )
   // }
+
 
   addToCart(product) {
     const cartProductIndex = this.cart.items.findIndex((cp) => {
@@ -79,6 +81,54 @@ class User {
       });
   }
 
+  deleteItemFromCart(productId){
+    const updatedCartItems = this.cart.items.filter(item => {
+        return item.productId.toString() !== productId.toString()
+    })
+    const db = getDb();
+    return db
+      .collection("users")
+      .updateOne(
+        { _id: new ObjectId(this._id) },
+        { $set: { cart: updatedCart } }
+      );
+  }
+
+
+//   const { MongoClient } = require('mongodb');
+
+// exports.postCartDeleteProduct = (req, res, next) => {
+//   const prodId = req.body.productId;
+  
+//   MongoClient.connect('mongodb://localhost:27017', (err, client) => {
+//     if (err) {
+//       console.log(err);
+//       return;
+//     }
+    
+//     const db = client.db('your_database_name');
+//     const cartCollection = db.collection('carts');
+//     const productCollection = db.collection('products');
+    
+//     cartCollection.findOne({ user: req.user._id })
+//       .then(cart => {
+//         return productCollection.findOne({ _id: prodId });
+//       })
+//       .then(product => {
+//         return cartCollection.updateOne({ _id: cart._id }, { $pull: { products: { _id: product._id } } });
+//       })
+//       .then(result => {
+//         res.redirect('/cart');
+//         client.close();
+//       })
+//       .catch(err => {
+//         console.log(err);
+//         client.close();
+//       });
+//   });
+// };
+
+
   static findById(userId) {
     const db = getDb();
     return db
@@ -93,25 +143,5 @@ class User {
       });
   }
 }
-
-// const Sequelize = require('sequelize');
-// const sequelize = require('../utils/database');
-
-// const User = sequelize.define('user', {
-//     id: {
-//         type: Sequelize.INTEGER,
-//         autoIncrement: true,
-//         allowNull: false,
-//         primaryKey: true
-//     },
-//     name: {
-//         type: Sequelize.STRING,
-//         allowNull: false
-//     },
-//     email: {
-//         type: Sequelize.STRING,
-//         allowNull: false
-//     }
-// })
 
 module.exports = User;
