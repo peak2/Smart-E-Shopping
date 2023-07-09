@@ -28,6 +28,7 @@ class User {
   //     )
   // }
 
+  
   addToCart(product) {
     const cartProductIndex = this.cart.items.findIndex((cp) => {
       //checking whether certain item exists
@@ -138,5 +139,6 @@ class User {
       });
   }
 }
+
 
 module.exports = User;
